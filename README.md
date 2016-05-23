@@ -12,6 +12,7 @@ mysql> create table project( id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, name VA
 mysql> create table event( id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(50) NOT NULL, start date NOT NULL, end date NOT NULL, project INT NOT NULL, status INT NOT NULL, info TEXT);
 mysql> create table person_project( person_id INT NOT NULL, project_id INT NOT NULL);
 mysql> create table person_event( person_id INT NOT NULL, event_id INT NOT NULL);
+mysql> create table event_event( slave_id INT NOT NULL, master_id INT NOT NULL);
 ```
 
 ## Database Description
@@ -21,12 +22,13 @@ mysql> show tables;
 | Tables_in_gantt |
 +-----------------+
 | event           |
+| event_event     |
 | person          |
 | person_event    |
 | person_project  |
 | project         |
 +-----------------+
-5 rows in set (0.00 sec)
+6 rows in set (0.00 sec)
 
 mysql> describe event;
 +---------+-------------+------+-----+---------+----------------+
@@ -41,6 +43,15 @@ mysql> describe event;
 | info    | text        | YES  |     | NULL    |                |
 +---------+-------------+------+-----+---------+----------------+
 7 rows in set (0.01 sec)
+
+mysql> describe event_event;
++-----------+---------+------+-----+---------+-------+
+| Field     | Type    | Null | Key | Default | Extra |
++-----------+---------+------+-----+---------+-------+
+| slave_id  | int(11) | NO   |     | NULL    |       |
+| master_id | int(11) | NO   |     | NULL    |       |
++-----------+---------+------+-----+---------+-------+
+2 rows in set (0.01 sec)
 
 mysql> describe person;
 +--------+-------------+------+-----+---------+----------------+

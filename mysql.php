@@ -365,7 +365,7 @@ class MySQL{
     $person_id = $row['id'];
     $res->close();
 
-    $sql = sprintf("SELECT * FROM person_project WHERE person=%d AND project=%d", $person_id, $project_id);
+    $sql = sprintf("SELECT * FROM person_project WHERE person_id=%d AND project_id=%d", $person_id, $project_id);
     $res = $this->mysql->query($sql);
     if ($res->num_rows == 0){
       $res->close();
@@ -384,7 +384,54 @@ class MySQL{
     $sql = sprintf("INSERT INTO person_event (person_id, event_id) VALUES (%d, %d)", $person_id, $event_id);
 
     $this->mysql->query($sql);
+  }
 
+  /*************************/
+  /* Event_Event Functions */
+  /*************************/
+  function new_ee($slave, $master, $project){
+
+    $sql = sprintf("SELECT * FROM project WHERE name='%s'", $project);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return;
+    }
+    $row = $res->fetch_array(MYSQLI_ASSOC);
+    $project_id = $row['id'];
+    $res->close();
+
+    $sql = sprintf("SELECT * FROM event WHERE name='%s' AND project=%d", $slave, $project_id);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return;
+    }
+    $row = $res->fetch_array(MYSQLI_ASSOC);
+    $slave_id = $row['id'];
+    $res->close();
+
+    $sql = sprintf("SELECT * FROM event WHERE name='%s' AND project=%d", $master, $project_id);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return;
+    }
+    $row = $res->fetch_array(MYSQLI_ASSOC);
+    $master_id = $row['id'];
+    $res->close();
+
+    $sql = sprintf("SELECT * FROM event_event WHERE slave_id=%d AND master_id=%d", $slave_id, $master_id);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows != 0){
+      $res->close();
+      return;
+    }
+    $res->close();
+
+    $sql = sprintf("INSERT INTO event_event (slave_id, master_id) VALUES (%d, %d)", $slave_id, $master_id);
+
+    $this->mysql->query($sql);
   }
 
 }
