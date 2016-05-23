@@ -1,0 +1,3 @@
+[submodule "gantti"]
+	path = gantti
+	url = https://github.com/pyyaoer/gantti.git

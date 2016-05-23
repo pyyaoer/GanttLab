@@ -27,6 +27,7 @@ mysql> show tables;
 | project         |
 +-----------------+
 5 rows in set (0.00 sec)
+
 mysql> describe event;
 +---------+-------------+------+-----+---------+----------------+
 | Field   | Type        | Null | Key | Default | Extra          |
