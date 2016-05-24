@@ -124,15 +124,16 @@ class MySQL{
     $this->mysql->query($sql);
   }
 
-  function info_project($name, &$info){
+  function info_project($id, &$name, &$info){
 
-    $sql = sprintf("SELECT * FROM project WHERE name='%s'", $name);
+    $sql = sprintf("SELECT * FROM project WHERE id='%d'", $id);
     $res = $this->mysql->query($sql);
     if ($res->num_rows == 0){
       $res->close();
       return;
     }
     $row = $res->fetch_array(MYSQLI_ASSOC);
+    $name = $row['name'];
     $info = $row['info'];
 
     $res->close();
@@ -239,6 +240,34 @@ class MySQL{
 
     $this->mysql->query($sql);
 
+  }
+
+  function show_projects($name){
+
+    $data = array();
+
+    $sql = sprintf("SELECT * FROM person WHERE name='%s'", $name);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return $data;
+    }
+    $row = $res->fetch_array(MYSQLI_ASSOC);
+    $id = $row['id'];
+    $res->close();
+
+    $sql = sprintf("SELECT * FROM person_project WHERE person_id=%d", $id);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return $data;
+    }
+    while($row = $res->fetch_array(MYSQLI_ASSOC)){
+      $data[]=$row['project_id'];
+    }
+    $res->close();
+
+    return $data;
   }
 
 

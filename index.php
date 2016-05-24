@@ -12,24 +12,7 @@ require('mysql.php');
 date_default_timezone_set('PRC');
 setlocale(LC_ALL, '');
 
-$project = "Auditory";
 $person = $_SESSION['person'];
-$mysql = new MySQL();
-$info = "";
-
-$mysql->connect_mysql();
-
-$mysql->info_project($project, $info);
-$data = $mysql->show_events($project);
-
-$mysql->close_mysql();
-
-$gantti = new Gantti($data, array(
-  'title'      => $project,
-  'cellwidth'  => 25,
-  'cellheight' => 35,
-  'today'      => true
-));
 
 ?>
 
@@ -101,6 +84,12 @@ $gantti = new Gantti($data, array(
               <li class="">
                 <a href="./index.php">Home</a>
               </li>
+              <li class="">
+                <a href="./index.php">Account</a>
+              </li>
+              <li class="">
+                <a href="./index.php">New project</a>
+              </li>
             </ul>
             <ul class="nav pull-right">
               <li class="">
@@ -112,20 +101,36 @@ $gantti = new Gantti($data, array(
       </div>
     </div>
 
-<header>
 
 <?php
 
-echo "<h1>".$project."</h1>";
-echo "<h2>".$info."</h2>";
+$project = "Auditory";
+$mysql = new MySQL();
 
-?>
+$mysql->connect_mysql();
 
-</header>
+$pojs = $mysql->show_projects($person);
+foreach($pojs as $project_id){
+  $mysql->info_project($project_id, $project, $info);
+  echo "<header>";
+  echo "<h1>".$project."</h1>";
+  echo "<h2>".$info."</h2>";
+  echo "</header>";
+  
+  $data = $mysql->show_events($project);
 
-<?php
+  if (sizeof($data) != 0){
+    $gantti = new Gantti($data, array(
+      'title'      => $project,
+      'cellwidth'  => 25,
+      'cellheight' => 35,
+      'today'      => true
+    ));
+    echo $gantti;
+  }
+}
 
-echo $gantti;
+$mysql->close_mysql();
 
 ?>
 
