@@ -30,14 +30,14 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows != 0){
       $res->close();
-      return;
+      return false;
     }
     $res->close();
 
     $sql = sprintf("INSERT INTO person (name, email, info, passwd) VALUES ('%s', '%s', '%s', '%s')", $name, $email, $info, $passwd);
 
     $this->mysql->query($sql);
-
+    return true;
   }
 
   function info_person($name, &$email, &$info, &$passwd){

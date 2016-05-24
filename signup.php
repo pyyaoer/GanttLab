@@ -1,8 +1,8 @@
 <?php
   session_start();
-
-  if(isset($_SESSION['person'])){
-    header("location:index.php");
+  if(isset($_SESSION['username'])){
+	session_start();
+	session_destroy();
   }
 ?>
 
@@ -57,20 +57,17 @@
 
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
   </head>
-
   <body>
 
     <div class="container">
 
-      <form class="form-signin" method="post" action="checklogin.php">
-        <h2 class="form-signin-heading">Please sign in</h2>
+      <form class="form-signin" method="post" action="checksignup.php">
+        <h2 class="form-signup-heading">Register</h2>
         <input type="text" name="username" class="input-block-level" placeholder="User name">
         <input type="password" name="passwd" class="input-block-level" placeholder="Password">
-        <label class="checkbox">
-          <input type="checkbox" name="remember" value="remember-me"> Remember me
-        </label>
-        <button class="btn btn-large btn-primary" name="submit" type="submit">Sign in</button>
-        <button class="btn btn-large" name="signup" type="button"><a href="signup.php" style="text-decoration:none">Sign up</a></button>
+        <input type="text" name="email" class="input-block-level" placeholder="Email Address">
+        <button class="btn btn-large btn-primary" name="submit" type="submit">Register</button>
+        <button class="btn btn-large" name="signin" type="button"><a href="login.php" style="text-decoration:none">Sign in</a></button>
       </form>
 
     </div>
