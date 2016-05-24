@@ -1,8 +1,8 @@
 <?php
   session_start();
 
-  if(!isset($_SESSION['person'])){
-    header("location:signin.php");
+  if(isset($_SESSION['person'])){
+    header("location:index.php");
   }
 ?>
 
@@ -70,8 +70,11 @@
               <li><a href="./join.php">Join Project</a></li>
               <li><a href="./newpoj.php">Create Project</a></li>
             </ul>
-            <form class="navbar-form pull-right" method="post" action="signout.php">
-              <button type="submit" class="btn">Sign Out</button>
+            <form class="navbar-form pull-right" method="post" action="checksignin.php">
+              <input class="span2" type="text" name="username" placeholder="Username">
+              <input class="span2" type="password" name="passwd" placeholder="Password">
+              <button type="submit" class="btn">Sign in</button>
+              <button type="button" class="btn"><a href="signup.php" style="text-decoration:none">Sign up</a></button>
             </form>
           </div><!--/.nav-collapse -->
         </div>

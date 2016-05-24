@@ -212,7 +212,7 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows == 0){
       $res->close();
-      return;
+      return false;
     }
     $row = $res->fetch_array(MYSQLI_ASSOC);
     $person_id = $row['id'];
@@ -222,7 +222,7 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows == 0){
       $res->close();
-      return;
+      return false;
     }
     $row = $res->fetch_array(MYSQLI_ASSOC);
     $project_id = $row['id'];
@@ -232,14 +232,14 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows != 0){
       $res->close();
-      return;
+      return true;
     }
     $res->close();
 
     $sql = sprintf("INSERT INTO person_project (person_id, project_id) VALUES (%d, %d)", $person_id, $project_id);
 
     $this->mysql->query($sql);
-
+    return true;
   }
 
   function show_projects($name){
@@ -381,7 +381,7 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows == 0){
       $res->close();
-      return;
+      return false;
     }
     $row = $res->fetch_array(MYSQLI_ASSOC);
     $project_id = $row['id'];
@@ -391,7 +391,7 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows == 0){
       $res->close();
-      return;
+      return false;
     }
     $row = $res->fetch_array(MYSQLI_ASSOC);
     $event_id = $row['id'];
@@ -401,7 +401,7 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows == 0){
       $res->close();
-      return;
+      return false;
     }
     $row = $res->fetch_array(MYSQLI_ASSOC);
     $person_id = $row['id'];
@@ -411,7 +411,7 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows == 0){
       $res->close();
-      return;
+      return false;
     }
     $res->close();
 
@@ -419,13 +419,14 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows != 0){
       $res->close();
-      return;
+      return true;
     }
     $res->close();
 
     $sql = sprintf("INSERT INTO person_event (person_id, event_id) VALUES (%d, %d)", $person_id, $event_id);
 
     $this->mysql->query($sql);
+    return true;
   }
 
   /*************************/

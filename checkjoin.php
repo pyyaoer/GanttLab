@@ -4,6 +4,18 @@
   if(!isset($_SESSION['person'])){
     header("location:signin.php");
   }
+
+  require('mysql.php');
+  $person = $_SESSION['person'];
+  $project = $_POST['pojname'];
+  $event = $_POST['eventname'];
+
+  $mysql = new MySQL();
+  $mysql->connect_mysql();
+  $res = $mysql->new_pp($person, $project);
+  $ress = $mysql->new_pe($person, $event, $project);
+  $mysql->close_mysql();
+
 ?>
 
 <!DOCTYPE html>
@@ -18,6 +30,32 @@
     <!-- Le styles -->
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
+
+      .form-signin {
+        max-width: 300px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form-signin .form-signin-heading,
+      .form-signin .checkbox {
+        margin-bottom: 10px;
+      }
+      .form-signin input[type="text"],
+      .form-signin input[type="password"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+
       body {
         padding-top: 60px;
         padding-bottom: 40px;
@@ -65,9 +103,9 @@
           <a class="brand" href="./index.php">GanttLab</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="./index.php">Home</a></li>
+              <li><a href="./index.php">Home</a></li>
               <li><a href="./projects.php">Projects</a></li>
-              <li><a href="./join.php">Join Project</a></li>
+              <li class="active"><a href="./join.php">Join Project</a></li>
               <li><a href="./newpoj.php">Create Project</a></li>
             </ul>
             <form class="navbar-form pull-right" method="post" action="signout.php">
@@ -80,32 +118,26 @@
 
     <div class="container">
 
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="hero-unit">
-        <h1>Gantt Lab</h1>
-        <p>A Gantt chart is a type of bar chart, adapted by Karol Adamiecki in 1896 and independently by Henry Gantt in the 1910s, that illustrates a project schedule. Gantt charts illustrate the start and finish dates of the terminal elements and summary elements of a project. Modern Gantt charts also show the dependency (i.e., precedence network) relationships between activities.</p>
-       <p>This is a Gantt Lab for a common usage. Just manage your life in a Gantt way!</p>
-       <p><a href="https://en.wikipedia.org/wiki/Gantt_chart" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
-      </div>
+<?php
+  if ($ress == true && res == true){
+      echo "<div class='alert alert-success'>";
+      echo "<button type='button' class='close' data-dismiss='alert'>×</button>";
+      echo "Successfully join Event ".$event." @ Project ".$project."!";
+      echo "<div>";
+  } else if (res == true){
+      echo "<div class='alert alert-block'>";
+      echo "<button type='button' class='close' data-dismiss='alert'>×</button>"
+;
+      echo "Successfully join Project ".$project.", but have some errors while joining Event ".$event."!";
+      echo "<div>";
+  } else{
+      echo "<div class='alert alert-error'>";
+      echo "<button type='button' class='close' data-dismiss='alert'>×</button>";
+      echo "Cannot join Project ".$project."!";
+      echo "<div>";
+  }
 
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="span4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-        </div>
-        <div class="span4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-       </div>
-        <div class="span4">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-        </div>
-      </div>
+?>
 
     </div> <!-- /container -->
 

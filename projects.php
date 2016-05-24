@@ -4,6 +4,14 @@
   if(!isset($_SESSION['person'])){
     header("location:signin.php");
   }
+  require('gantti/lib/gantti.php');
+  require('mysql.php');
+  
+  date_default_timezone_set('PRC');
+  setlocale(LC_ALL, '');
+  
+  $person = $_SESSION['person'];
+  
 ?>
 
 <!DOCTYPE html>
@@ -16,6 +24,7 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
+    <link rel="stylesheet" href="gantti/styles/css/gantti.css" />
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
       body {
@@ -23,20 +32,17 @@
         padding-bottom: 40px;
         background: #fdf6e3;
       }
-      .hero-unit {
-        background: #ffebcd;
-      }
       h1 {
         font-size: 30px;
         margin-bottom: 10px;
         text-transform: uppercase;
         color: #d33682; }
-
+  
       h2 {
         color: #b58900;
         font-weight: normal;
         margin-bottom: 10px; }
-    </style>
+      </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -65,8 +71,8 @@
           <a class="brand" href="./index.php">GanttLab</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="./index.php">Home</a></li>
-              <li><a href="./projects.php">Projects</a></li>
+              <li><a href="./index.php">Home</a></li>
+              <li class="active"><a href="./projects.php">Projects</a></li>
               <li><a href="./join.php">Join Project</a></li>
               <li><a href="./newpoj.php">Create Project</a></li>
             </ul>
@@ -80,32 +86,37 @@
 
     <div class="container">
 
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="hero-unit">
-        <h1>Gantt Lab</h1>
-        <p>A Gantt chart is a type of bar chart, adapted by Karol Adamiecki in 1896 and independently by Henry Gantt in the 1910s, that illustrates a project schedule. Gantt charts illustrate the start and finish dates of the terminal elements and summary elements of a project. Modern Gantt charts also show the dependency (i.e., precedence network) relationships between activities.</p>
-       <p>This is a Gantt Lab for a common usage. Just manage your life in a Gantt way!</p>
-       <p><a href="https://en.wikipedia.org/wiki/Gantt_chart" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
-      </div>
+<?php
 
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="span4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-        </div>
-        <div class="span4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-       </div>
-        <div class="span4">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-        </div>
-      </div>
+  $project = "Auditory";
+  $mysql = new MySQL();
+  
+  $mysql->connect_mysql();
+  
+  $pojs = $mysql->show_projects($person);
+  foreach($pojs as $project_id){
+    $mysql->info_project($project_id, $project, $info);
+    echo "<header>";
+    echo "<h1>".$project."</h1>";
+    echo "<h2>".$info."</h2>";
+    echo "</header>";
+  
+    $data = $mysql->show_events($project);
+  
+    if (sizeof($data) != 0){
+      $gantti = new Gantti($data, array(
+        'title'      => $project,
+        'cellwidth'  => 25,
+        'cellheight' => 35,
+        'today'      => true
+      ));
+      echo $gantti;
+    }
+  }
+  
+  $mysql->close_mysql();
+  
+?>
 
     </div> <!-- /container -->
 
