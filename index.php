@@ -52,11 +52,6 @@ $gantti = new Gantti($data, array(
       color: #657b83;
       padding: 50px 0; }
 
-    a {
-      color: #d33682;
-      text-decoration: none;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
-
     header, article {
       width: 500px;
       margin: 0 auto;
@@ -80,9 +75,6 @@ $gantti = new Gantti($data, array(
     p {
       margin-bottom: 20px; }
 
-    ul li {
-      list-style: square; }
-
     article {
       padding-bottom: 100px; }
   </style>
@@ -94,6 +86,31 @@ $gantti = new Gantti($data, array(
 </head>
 
 <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="./index.php">GanttLab</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="">
+                <a href="./index.php">Home</a>
+              </li>
+            </ul>
+            <ul class="nav pull-right">
+              <li class="">
+                <a href="./logout.php">Logout</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
 
 <header>
 

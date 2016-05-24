@@ -64,7 +64,7 @@
 
       <form class="form-signin" method="post" action="checklogin.php">
         <h2 class="form-signin-heading">Please sign in</h2>
-        <input type="text" name="username" class="input-block-level" placeholder="Email address">
+        <input type="text" name="username" class="input-block-level" placeholder="User name">
         <input type="password" name="passwd" class="input-block-level" placeholder="Password">
         <label class="checkbox">
           <input type="checkbox" name="remember" value="remember-me"> Remember me
