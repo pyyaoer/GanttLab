@@ -88,6 +88,19 @@ class MySQL{
     $this->mysql->query($sql);
   }
 
+  function has_person($name, $passwd){
+
+    $sql = sprintf("SELECT * FROM person WHERE name='%s' AND passwd='%s'", $name, $passwd);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return false;
+    }
+    $res->close();
+    return true;
+
+  }
+
 
   /*********************/
   /* Project Functions */

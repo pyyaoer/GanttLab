@@ -62,14 +62,14 @@
 
     <div class="container">
 
-      <form class="form-signin">
+      <form class="form-signin" method="post" action="checklogin.php">
         <h2 class="form-signin-heading">Please sign in</h2>
-        <input type="text" class="input-block-level" placeholder="Email address">
-        <input type="password" class="input-block-level" placeholder="Password">
+        <input type="text" name="username" class="input-block-level" placeholder="Email address">
+        <input type="password" name="passwd" class="input-block-level" placeholder="Password">
         <label class="checkbox">
-          <input type="checkbox" value="remember-me"> Remember me
+          <input type="checkbox" name="remember" value="remember-me"> Remember me
         </label>
-        <button class="btn btn-large btn-primary" type="submit">Sign in</button>
+        <button class="btn btn-large btn-primary" name="submit" type="submit">Sign in</button>
       </form>
 
     </div>
