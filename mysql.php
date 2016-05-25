@@ -497,6 +497,8 @@ class MySQL{
     $res->close();
 
     if ($e_status == "done"){
+      $sql = sprintf("DELETE FROM event_event WHERE slave_id=%d", $event_id);
+      $this->mysql->query($sql);
       return true;
     }
     else if ($e_status == "doing"){
