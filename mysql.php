@@ -420,12 +420,20 @@ class MySQL{
     }
     $row = $res->fetch_array(MYSQLI_ASSOC);
     $e_status = $row['status'];
+    $e_end = $row['end'];
     $res->close();
 
     if ($e_status == "done"){
       return true;
     }
-    else if ($e_status == "will"){
+
+    $today_t = date("y-m-d");
+    if (strtotime($today_t) > strtotime($e_end)){
+      $sql = sprintf("UPDATE event SET status='%s' WHERE id=%d", "delayed", $event_id);
+      $this->mysql->query($sql);
+    }
+
+    if ($e_status == "will"){
       $sql = sprintf("SELECT * FROM event_event WHERE master_id=%d", $event_id);
       $res = $this->mysql->query($sql);
       if ($res->num_rows == 0){
