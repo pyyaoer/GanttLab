@@ -69,6 +69,7 @@
               <li><a href="./projects.php">Projects</a></li>
               <li><a href="./join.php">Join Project</a></li>
               <li><a href="./newpoj.php">Create Project</a></li>
+              <li><a href="./status.php">Change Status</a></li>
             </ul>
             <form class="navbar-form pull-right" method="post" action="checksignin.php">
               <input class="span2" type="text" name="username" placeholder="Username">

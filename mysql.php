@@ -302,6 +302,37 @@ class MySQL{
     return $data;
   }
 
+  function show_events_person($person, $project_id){
+
+    $data = array();
+
+    $sql = sprintf("SELECT * FROM person WHERE name='%s'", $person);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return $data;
+    }
+    $row = $res->fetch_array(MYSQLI_ASSOC);
+    $id = $row['id'];
+    $res->close();
+
+    $sql = sprintf("SELECT event.* FROM person_event, event WHERE person_event.person_id=%d AND person_event.event_id=event.id AND event.project=%d", $id, $project_id);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return $data;
+    }
+    while($row = $res->fetch_array(MYSQLI_ASSOC)){
+      $data[]=array(
+        'id' => $row['id'],
+        'name' => $row['name'],
+        'status' => $row['status'],
+      );
+    }
+    $res->close();
+
+    return $data;
+  }
 
   /*******************/
   /* Event Functions */
@@ -370,6 +401,24 @@ class MySQL{
     $res->close();
   }
 
+  function info_event_id($id, &$name, &$start, &$end, &$project, &$status, &$info){
+
+    $sql = sprintf("SELECT * FROM event WHERE id=%d", $id);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return;
+    }
+    $row = $res->fetch_array(MYSQLI_ASSOC);
+    $name = $row['name'];
+    $start = $row['start'];
+    $end = $row['end'];
+    $status = $row['status'];
+    $info = $row['info'];
+
+    $res->close();
+  }
+
   function update_event($name, $new_name, $start, $end, $project, $status, $info){
 
     if ($info == NULL)
@@ -410,6 +459,30 @@ class MySQL{
     $this->mysql->query($sql);
   }
 
+  function change_status($event_id){
+
+    $sql = sprintf("SELECT * FROM event WHERE id=%d", $event_id);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return false;
+    }
+    $row = $res->fetch_array(MYSQLI_ASSOC);
+    $status = $row['status'];
+    $res->close();
+
+    if ($status == "done" || $status=="will"){
+      return;
+    }
+    else if ($status=="delayed" || $status=="doing"){
+      self::flush_event($event_id, "done");
+    }
+    else{
+      self::flush_event($event_id, "doing");
+    }
+
+  }
+
   function flush_event($event_id, $status){
 
     $sql = sprintf("SELECT * FROM event WHERE id=%d", $event_id);
@@ -426,14 +499,14 @@ class MySQL{
     if ($e_status == "done"){
       return true;
     }
-
-    $today_t = date("y-m-d");
-    if (strtotime($today_t) > strtotime($e_end)){
-      $sql = sprintf("UPDATE event SET status='%s' WHERE id=%d", "delayed", $event_id);
-      $this->mysql->query($sql);
+    else if ($e_status == "doing"){
+      $today_t = date("y-m-d");
+      if (strtotime($today_t) > strtotime($e_end)){
+        $sql = sprintf("UPDATE event SET status='%s' WHERE id=%d", "delayed", $event_id);
+        $this->mysql->query($sql);
+      }
     }
-
-    if ($e_status == "will"){
+    else if ($e_status == "will"){
       $sql = sprintf("SELECT * FROM event_event WHERE master_id=%d", $event_id);
       $res = $this->mysql->query($sql);
       if ($res->num_rows == 0){

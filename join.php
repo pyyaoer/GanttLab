@@ -96,6 +96,7 @@
               <li><a href="./projects.php">Projects</a></li>
               <li class="active"><a href="./join.php">Join Project</a></li>
               <li><a href="./newpoj.php">Create Project</a></li>
+              <li><a href="./status.php">Change Status</a></li>
             </ul>
             <form class="navbar-form pull-right" method="post" action="signout.php">
               <button type="submit" class="btn">Sign Out</button>
