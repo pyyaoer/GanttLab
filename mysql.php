@@ -427,7 +427,7 @@ class MySQL{
     }
     else if ($e_status == "will"){
       $sql = sprintf("SELECT * FROM event_event WHERE master_id=%d", $event_id);
-      $this->mysql->query($sql);
+      $res = $this->mysql->query($sql);
       if ($res->num_rows == 0){
         $res->close();
         $sql = sprintf("UPDATE event SET status='%s' WHERE id=%d", "ready", $event_id);

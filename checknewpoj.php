@@ -29,7 +29,7 @@
     $res3 = $mysql->new_event($master, $m_start, $m_end, $project, "", $masterinfo);
 }
   if ($slave != NULL && $slave != "" && $master != NULL && $master != ""){
-    $res4 = $mysql->new_event($slave, $master, $project);
+    $res4 = $mysql->new_ee($slave, $master, $project);
   }
   $res5 = $mysql->new_pp($person, $project);
   $mysql->close_mysql();

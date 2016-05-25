@@ -96,6 +96,7 @@
   $pojs = $mysql->show_projects($person);
   foreach($pojs as $project_id){
     $mysql->info_project($project_id, $project, $info);
+    echo "<br/><br/>";
     echo "<header>";
     echo "<h1>".$project."</h1>";
     echo "<h2>".$info."</h2>";
