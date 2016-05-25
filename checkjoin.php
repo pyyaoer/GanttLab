@@ -124,7 +124,7 @@
       echo "<button type='button' class='close' data-dismiss='alert'>×</button>";
       echo "Successfully join Event ".$event." @ Project ".$project."!";
       echo "<div>";
-  } else if (res == true){
+  } else if ($res == true){
       echo "<div class='alert alert-block'>";
       echo "<button type='button' class='close' data-dismiss='alert'>×</button>"
 ;

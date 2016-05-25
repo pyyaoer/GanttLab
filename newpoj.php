@@ -4,14 +4,6 @@
   if(!isset($_SESSION['person'])){
     header("location:signin.php");
   }
-  require('gantti/lib/gantti.php');
-  require('mysql.php');
-  
-  date_default_timezone_set('PRC');
-  setlocale(LC_ALL, '');
-  
-  $person = $_SESSION['person'];
-  
 ?>
 
 <!DOCTYPE html>
@@ -24,25 +16,53 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link rel="stylesheet" href="gantti/styles/css/gantti.css" />
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
+
+      .form-signin {
+        max-width: 300px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form-signin .form-signin-heading,
+      .form-signin .checkbox {
+        margin-bottom: 10px;
+      }
+      .form-signin input[type="text"],
+      .form-signin input[type="password"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+
       body {
         padding-top: 60px;
         padding-bottom: 40px;
         background: #fdf6e3;
+      }
+      .hero-unit {
+        background: #ffebcd;
       }
       h1 {
         font-size: 30px;
         margin-bottom: 10px;
         text-transform: uppercase;
         color: #d33682; }
-  
+
       h2 {
         color: #b58900;
         font-weight: normal;
         margin-bottom: 10px; }
-      </style>
+    </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -72,9 +92,9 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li><a href="./index.php">Home</a></li>
-              <li class="active"><a href="./projects.php">Projects</a></li>
+              <li><a href="./projects.php">Projects</a></li>
               <li><a href="./join.php">Join Project</a></li>
-              <li><a href="./newpoj.php">Create Project</a></li>
+              <li class="active"><a href="./newpoj.php">Create Project</a></li>
             </ul>
             <form class="navbar-form pull-right" method="post" action="signout.php">
               <button type="submit" class="btn">Sign Out</button>
@@ -86,38 +106,22 @@
 
     <div class="container">
 
-<?php
-
-  $project = "Auditory";
-  $mysql = new MySQL();
-  
-  $mysql->connect_mysql();
-  
-  $pojs = $mysql->show_projects($person);
-  foreach($pojs as $project_id){
-    $mysql->info_project($project_id, $project, $info);
-    echo "<header>";
-    echo "<h1>".$project."</h1>";
-    echo "<h2>".$info."</h2>";
-    echo "</header>";
-  
-    $mysql->flush_project($project);
-    $data = $mysql->show_events($project);
-  
-    if (sizeof($data) != 0){
-      $gantti = new Gantti($data, array(
-        'title'      => $project,
-        'cellwidth'  => 25,
-        'cellheight' => 35,
-        'today'      => true
-      ));
-      echo $gantti;
-    }
-  }
-  
-  $mysql->close_mysql();
-  
-?>
+      <form class="form-signin" method="post" action="checknewpoj.php">
+        <h2 class="form-signup-heading">Create Project</h2>
+        <input type="text" name="pojname" class="input-block-level" placeholder="Project name">
+        <textarea name="pojinfo" class="input-block-level" placeholder="Project info"></textarea>
+        <br/>
+        <input type="text" name="slave" class="input-block-level" placeholder="Slave event">
+        <input type="text" name="s_start" class="input-block-level" placeholder="Slave Start time">
+        <input type="text" name="s_end" class="input-block-level" placeholder="Slave End time">
+        <textarea name="slaveinfo" class="input-block-level" placeholder="Slave Event info"></textarea>
+        <br/>
+        <input type="text" name="master" class="input-block-level" placeholder="Master event">
+        <input type="text" name="m_start" class="input-block-level" placeholder="Master Start time">
+        <input type="text" name="m_end" class="input-block-level" placeholder="Master End time">
+        <textarea name="masterinfo" class="input-block-level" placeholder="Master Event info"></textarea>
+        <button class="btn btn-large btn-primary" name="submit" type="submit">Create</button>
+      </form>
 
     </div> <!-- /container -->
 

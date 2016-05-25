@@ -107,6 +107,9 @@ class MySQL{
   /*********************/
   function new_project($name, $info){
 
+    if ($name == NULL || $name == "")
+      return false;
+
     if ($info == NULL)
       $info = "";
 
@@ -114,14 +117,18 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows != 0){
       $res->close();
-      echo "<script>alert('Project ".$name." exists!');</script>";
-      return;
+      return true;
     }
     $res->close();
 
-    $sql = sprintf("INSERT INTO project (name, info) VALUES ('%s', '%s')", $name, $info);
+    if ($info != ""){
+      $sql = sprintf("INSERT INTO project (name, info) VALUES ('%s', '%s')", $name, $info);
+    } else{
+      $sql = sprintf("INSERT INTO project (name) VALUES ('%s')", $name);
+    }
 
     $this->mysql->query($sql);
+    return true;
   }
 
   function info_project($id, &$name, &$info){
@@ -167,6 +174,31 @@ class MySQL{
     $sql = sprintf("UPDATE project SET name='%s', info='%s' WHERE id=%d", $new_name, $info, $id);
 
     $this->mysql->query($sql);
+  }
+
+  function flush_project($name){
+
+    $sql = sprintf("SELECT * FROM project WHERE name='%s'", $name);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return false;
+    }
+    $row = $res->fetch_array(MYSQLI_ASSOC);
+    $id = $row['id'];
+    $res->close();
+
+    $sql = sprintf("SELECT * FROM event WHERE project=%d ORDER BY start", $id);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return false;
+    }
+    while($row = $res->fetch_array(MYSQLI_ASSOC)){
+      self::flush_event($row['id'], "");
+    }
+    $res->close();
+
   }
 
   function show_events($name){
@@ -276,6 +308,9 @@ class MySQL{
   /*******************/
   function new_event($name, $start, $end, $project, $status, $info){
 
+    if ($name == NULL || name == "")
+      return false;
+
     if ($status == "" || $status == NULL)
       $status = "will";
     if ($info == NULL)
@@ -285,7 +320,7 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows == 0){
       $res->close();
-      return;
+      return false;
     }
     $row = $res->fetch_array(MYSQLI_ASSOC);
     $project_id = $row['id'];
@@ -295,13 +330,17 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows != 0){
       $res->close();
-      return;
+      return true;
+    }
+
+    if ($start == NULL || $end == NULL || $start == "" || $end == ""){
+      return false;
     }
 
     $sql = sprintf("INSERT INTO event (name, start, end, project, status, info) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')", $name, $start, $end, $project_id, $status, $info);
 
     $this->mysql->query($sql);
-
+    return true;
   }
 
   function info_event($name, &$start, &$end, $project, &$status, &$info){
@@ -371,6 +410,57 @@ class MySQL{
     $this->mysql->query($sql);
   }
 
+  function flush_event($event_id, $status){
+
+    $sql = sprintf("SELECT * FROM event WHERE id=%d", $event_id);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return false;
+    }
+    $row = $res->fetch_array(MYSQLI_ASSOC);
+    $e_status = $row['status'];
+    $res->close();
+
+    if ($e_status == "done"){
+      return true;
+    }
+    else if ($e_status == "will"){
+      $sql = sprintf("SELECT * FROM event_event WHERE master_id=%d", $event_id);
+      $this->mysql->query($sql);
+      if ($res->num_rows == 0){
+        $res->close();
+        $sql = sprintf("UPDATE event SET status='%s' WHERE id=%d", "ready", $event_id);
+        $this->mysql->query($sql);
+      }
+    }
+    else if ($e_status == "ready"){
+      $sql = sprintf("SELECT * FROM event_event WHERE master_id=%d", $event_id);
+      $res = $this->mysql->query($sql);
+      if ($res->num_rows != 0){
+        $res->close();
+        $sql = sprintf("UPDATE event SET status='%s' WHERE id=%d", "will", $event_id);
+        $this->mysql->query($sql);
+      }
+    }
+
+    if ($status == ""){
+      return true;
+    }
+    else if ($status == "done"){
+      $sql = sprintf("UPDATE event SET status='%s' WHERE id=%d", $status, $event_id);
+      $this->mysql->query($sql);
+      $sql = sprintf("DELETE FROM event_event WHERE slave_id=%d", $event_id);
+      $this->mysql->query($sql);
+    }
+    else if ($status == "doing" || $status == "delayed"){
+      $sql = sprintf("UPDATE event SET status='%s' WHERE id=%d", $status, $event_id);
+      $this->mysql->query($sql);
+    }
+
+    return true;
+  }
+
 
   /**************************/
   /* Person_Event Functions */
@@ -438,7 +528,7 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows == 0){
       $res->close();
-      return;
+      return false;
     }
     $row = $res->fetch_array(MYSQLI_ASSOC);
     $project_id = $row['id'];
@@ -448,7 +538,7 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows == 0){
       $res->close();
-      return;
+      return false;
     }
     $row = $res->fetch_array(MYSQLI_ASSOC);
     $slave_id = $row['id'];
@@ -458,7 +548,7 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows == 0){
       $res->close();
-      return;
+      return false;
     }
     $row = $res->fetch_array(MYSQLI_ASSOC);
     $master_id = $row['id'];
@@ -468,13 +558,14 @@ class MySQL{
     $res = $this->mysql->query($sql);
     if ($res->num_rows != 0){
       $res->close();
-      return;
+      return true;
     }
     $res->close();
 
     $sql = sprintf("INSERT INTO event_event (slave_id, master_id) VALUES (%d, %d)", $slave_id, $master_id);
 
     $this->mysql->query($sql);
+    return true;
   }
 
 }

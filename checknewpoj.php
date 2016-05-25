@@ -4,14 +4,36 @@
   if(!isset($_SESSION['person'])){
     header("location:signin.php");
   }
-  require('gantti/lib/gantti.php');
+
   require('mysql.php');
-  
-  date_default_timezone_set('PRC');
-  setlocale(LC_ALL, '');
-  
   $person = $_SESSION['person'];
-  
+  $project = $_POST['pojname'];
+  $pojinfo = $_POST['pojinfo'];
+  $slave = $_POST['slave'];
+  $s_start = $_POST['s_start'];
+  $s_end = $_POST['s_end'];
+  $slaveinfo = $_POST['slaveinfo'];
+  $master = $_POST['master'];
+  $m_start = $_POST['m_start'];
+  $m_end = $_POST['m_end'];
+  $masterinfo = $_POST['masterinfo'];
+
+  $mysql = new MySQL();
+  $mysql->connect_mysql();
+  $res1 = $res2 = $res3 = $res4 = $res5 = true;
+  $res1 = $mysql->new_project($project, $pojinfo);
+  if ($slave != NULL && $slave != ""){
+    $res2 = $mysql->new_event($slave, $s_start, $s_end, $project, "", $slaveinfo);
+  }
+  if ($master != NULL && $master != ""){
+    $res3 = $mysql->new_event($master, $m_start, $m_end, $project, "", $masterinfo);
+}
+  if ($slave != NULL && $slave != "" && $master != NULL && $master != ""){
+    $res4 = $mysql->new_event($slave, $master, $project);
+  }
+  $res5 = $mysql->new_pp($person, $project);
+  $mysql->close_mysql();
+
 ?>
 
 <!DOCTYPE html>
@@ -24,25 +46,53 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link rel="stylesheet" href="gantti/styles/css/gantti.css" />
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
+
+      .form-signin {
+        max-width: 300px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form-signin .form-signin-heading,
+      .form-signin .checkbox {
+        margin-bottom: 10px;
+      }
+      .form-signin input[type="text"],
+      .form-signin input[type="password"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+
       body {
         padding-top: 60px;
         padding-bottom: 40px;
         background: #fdf6e3;
+      }
+      .hero-unit {
+        background: #ffebcd;
       }
       h1 {
         font-size: 30px;
         margin-bottom: 10px;
         text-transform: uppercase;
         color: #d33682; }
-  
+
       h2 {
         color: #b58900;
         font-weight: normal;
         margin-bottom: 10px; }
-      </style>
+    </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -72,8 +122,8 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li><a href="./index.php">Home</a></li>
-              <li class="active"><a href="./projects.php">Projects</a></li>
-              <li><a href="./join.php">Join Project</a></li>
+              <li><a href="./projects.php">Projects</a></li>
+              <li class="active"><a href="./join.php">Join Project</a></li>
               <li><a href="./newpoj.php">Create Project</a></li>
             </ul>
             <form class="navbar-form pull-right" method="post" action="signout.php">
@@ -87,36 +137,18 @@
     <div class="container">
 
 <?php
-
-  $project = "Auditory";
-  $mysql = new MySQL();
-  
-  $mysql->connect_mysql();
-  
-  $pojs = $mysql->show_projects($person);
-  foreach($pojs as $project_id){
-    $mysql->info_project($project_id, $project, $info);
-    echo "<header>";
-    echo "<h1>".$project."</h1>";
-    echo "<h2>".$info."</h2>";
-    echo "</header>";
-  
-    $mysql->flush_project($project);
-    $data = $mysql->show_events($project);
-  
-    if (sizeof($data) != 0){
-      $gantti = new Gantti($data, array(
-        'title'      => $project,
-        'cellwidth'  => 25,
-        'cellheight' => 35,
-        'today'      => true
-      ));
-      echo $gantti;
-    }
+  if ($res1 == true){
+      echo "<div class='alert alert-success'>";
+      echo "<button type='button' class='close' data-dismiss='alert'>×</button>";
+      echo "Successfully create Project ".$project."!";
+      echo "<div>";
+  } else{
+      echo "<div class='alert alert-error'>";
+      echo "<button type='button' class='close' data-dismiss='alert'>×</button>";
+      echo "Cannot create Project ".$project."!";
+      echo "<div>";
   }
-  
-  $mysql->close_mysql();
-  
+
 ?>
 
     </div> <!-- /container -->
