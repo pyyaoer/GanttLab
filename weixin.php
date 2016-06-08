@@ -3,6 +3,8 @@
   * wechat php test
   */
 
+require('mysql.php');
+
 //define your token
 define("TOKEN", "weixin");
 $wechatObj = new wechatCallbackapiTest();
@@ -50,10 +52,20 @@ class wechatCallbackapiTest
               </xml>";       
         if(!empty( $keyword ))
         {
-            $msgType = "text";
-          $contentStr = "[发呆]";
+          $mysql = new MySQL();
+          $mysql->connect_mysql();
+          $ret = $mysql->wid_person($name, $fromUsername);
+          if ($ret != 0){
+            $contentStr = "You are not a user!";
+          }
+          else{
+            $contentStr = "[发呆]";
+          }
+          $msgType = "text";
           $resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
           echo $resultStr;
+          $mysql->close_mysql();
+
         }else{
           echo "Input something...";
         }
@@ -89,5 +101,6 @@ class wechatCallbackapiTest
     }
   }
 }
+
 
 ?>

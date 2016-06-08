@@ -40,7 +40,22 @@ class MySQL{
     return true;
   }
 
-  function info_person($name, &$email, &$info, &$passwd){
+  function wid_person(&$name, $wid){
+
+    $sql = sprintf("SELECT * FROM person WHERE wid='%s'", $wid);
+    $res = $this->mysql->query($sql);
+    if ($res->num_rows == 0){
+      $res->close();
+      return -1;
+    }
+    $row = $res->fetch_array(MYSQLI_ASSOC);
+    $name = $row['name'];
+
+    $res->close();
+    return 0;
+  }
+
+  function info_person($name, &$email, &$info, &$passwd, &$wid){
 
     $sql = sprintf("SELECT * FROM person WHERE name='%s'", $name);
     $res = $this->mysql->query($sql);
@@ -52,16 +67,19 @@ class MySQL{
     $email = $row['email'];
     $info = $row['info'];
     $passwd = $row['passwd'];
+    $wid = $row['wid'];
 
     $res->close();
   }
 
-  function update_person($name, $new_name, $email, $info, $passwd){
+  function update_person($name, $new_name, $email, $info, $passwd, $wid){
 
     if ($email == NULL)
       $email = "";
     if ($info == NULL)
       $info = "";
+    if ($wid == NULL)
+      $wid = "";
 
     if (strcmp($name, $new_name) != 0){
       $sql = sprintf("SELECT * FROM person WHERE name='%s'", $new_name);
@@ -83,7 +101,7 @@ class MySQL{
     $id = $row['id'];
     $res->close();
 
-    $sql = sprintf("UPDATE person SET name='%s', email='%s', info='%s', passwd='%s' WHERE id=%d", $new_name, $email, $info, $passwd, $id);
+    $sql = sprintf("UPDATE person SET name='%s', email='%s', info='%s', passwd='%s', wid='%s' WHERE id=%d", $new_name, $email, $info, $passwd, $wid, $id);
 
     $this->mysql->query($sql);
   }
