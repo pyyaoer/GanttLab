@@ -58,8 +58,8 @@ class wechatCallbackapiTest
             $res = $mysql->has_person($strArr[1], $strArr[2]);
             $contentStr="Failed!";
             if ($res == true){
-              $mysql->info_person($name, $email, $info, $passwd, $wid);
-              $mysql->update_person($name, $name, $email, $info, $passwd, $fromUsername);
+              $mysql->info_person($strArr[1], $email, $info, $strArr[2], $wid);
+              $mysql->update_person($strArr[1], $strArr[1], $email, $info, $strArr[2], $fromUsername);
               $contentStr="Success!";
             }
           }
