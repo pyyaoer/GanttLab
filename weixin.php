@@ -34,8 +34,6 @@ class wechatCallbackapiTest
 
       //extract post data
     if (!empty($postStr)){
-        /* libxml_disable_entity_loader is to prevent XML eXternal Entity Injection,
-           the best way is to check the validity of xml by yourself */
         libxml_disable_entity_loader(true);
           $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
         $fromUsername = $postObj->FromUserName;
@@ -55,11 +53,36 @@ class wechatCallbackapiTest
           $mysql = new MySQL();
           $mysql->connect_mysql();
           $ret = $mysql->wid_person($name, $fromUsername);
-          if ($ret != 0){
-            $contentStr = "You are not a user!";
+          $strArr = explode(" ", $keyword);
+          if ($strArr[0] == 'bind'){
+            $res = $mysql->has_person($strArr[1], $strArr[2]);
+            $contentStr="Failed!";
+            if ($res == true){
+              $mysql->info_person($name, $email, $info, $passwd, $wid);
+              $mysql->update_person($name, $name, $email, $info, $passwd, $fromUsername);
+              $contentStr="Success!";
+            }
           }
-          else{
-            $contentStr = "[发呆]";
+          else if ($strArr[0] == 'list' && $ret == 0){
+            $contentStr="\n";
+            $pojs = $mysql->show_projects($name);
+            foreach($pojs as $project_id){
+              $mysql->info_project($project_id, $project, $info);
+              $contentStr=$contentStr.$project."\n";
+              $mysql->flush_project($project);
+              $data = $mysql->show_events_person($name, $project_id);
+              if (sizeof($data) != 0){
+                foreach ($data as $dt){
+                  $contentStr=$contentStr."\t".$dt['name']."\n";
+                }
+              }
+              $contentStr=$contentStr."\n";
+            }
+          }
+          else if ($strArr[0] == 'push' && $ret == 0){
+            $mysql->info_event($strArr[2], $start, $end, $strArr[1], $status, $info, $id);
+            $mysql->change_status($id);
+            $contentStr="Success!";
           }
           $msgType = "text";
           $resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);

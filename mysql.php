@@ -392,7 +392,7 @@ class MySQL{
     return true;
   }
 
-  function info_event($name, &$start, &$end, $project, &$status, &$info){
+  function info_event($name, &$start, &$end, $project, &$status, &$info, &$id){
 
     $sql = sprintf("SELECT * FROM project WHERE name='%s'", $project);
     $res = $this->mysql->query($sql);
@@ -415,6 +415,7 @@ class MySQL{
     $end = $row['end'];
     $status = $row['status'];
     $info = $row['info'];
+    $id = $row['id'];
 
     $res->close();
   }
